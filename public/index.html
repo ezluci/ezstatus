@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+   <style>
+      .service {
+         position: relative;
+         height: 20px;
+         margin-bottom: 50px;
+      }
+
+      .service-timeline {
+         position: absolute;
+         top: 30px;
+         width: 100%;
+         border: 1px solid black;
+         z-index: 2;
+      }
+
+      .service-vline {
+         position: absolute;
+         top: 25px;
+         height: 15px;
+         border-left: 2px solid green;
+      }
+   </style>
+</head>
+
+<body>
+   <div>
+      <h2>status on the last 30 days</h2>
+   </div>
+
+   <div id="nginx" class="service">
+      <span>nginx</span>
+      <hr class="service-timeline">
+   </div>
+
+   <div id="ezlucicom" class="service">
+      <span>ezluci.com</span>
+      <hr class="service-timeline">
+   </div>
+
+   <div id="blog" class="service">
+      <span>blog.ezluci.com</span>
+      <hr class="service-timeline">
+   </div>
+
+   <div id="files" class="service">
+      <span>files.ezluci.com</span>
+      <hr class="service-timeline">
+   </div>
+
+   <div id="ezpaste" class="service">
+      <span>ezpaste.ezluci.com</span>
+      <hr class="service-timeline">
+   </div>
+
+   <div id="pyro_web" class="service">
+      <span>pyromasters-mp web server</span>
+      <hr class="service-timeline">
+   </div>
+
+   <div id="pyro_socket" class="service">
+      <span>pyromasters-mp socket server</span>
+      <hr class="service-timeline">
+   </div>
+
+   <div id="mc_server" class="service">
+      <span>minecraft server</span>
+      <hr class="service-timeline">
+   </div>
+
+   <script>
+      const timeNow = Math.floor(Date.now() / 1000);
+      const timeStart = timeNow - 2592000;
+      console.log(timeStart, timeNow);
+
+      const services = ['nginx', 'ezlucicom', 'blog', 'files', 'ezpaste', 'pyro_web', 'pyro_socket', 'mc_server'];
+
+      fetch('status.json')
+         .then(response => response.json())
+         .then(data => {
+            window.data = data;
+            services.forEach(service => {
+               const serviceElm = document.querySelector(`#${service}`);
+               data[service].forEach(({ time, status }) => {
+                  if (time < timeStart || time > timeNow) {
+                     return;
+                  }
+                  const vlineElm = document.createElement('span');
+                  vlineElm.style.left = `${100 * (time - timeStart) / (timeNow - timeStart)}%`;
+                  vlineElm.classList.add('service-vline');
+                  serviceElm.appendChild(vlineElm);
+               });
+            })
+         })
+         .catch(err => console.error(err));
+   </script>
+</body>
+
+</html>

@@ -1,0 +1,1 @@
+gcc -o ezstatus -O2 ezstatus.c services.c cjson/cJSON.c
